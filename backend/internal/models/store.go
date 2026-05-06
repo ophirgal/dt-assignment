@@ -1,7 +1,8 @@
 package models
 
 type Store struct {
-	ID      int    `json:"id"`
-	Name    string `json:"name"`
-	ChainID int    `json:"chain_id"`
+	ID          int    `json:"id"`
+	DisplayName string `json:"displayName"`
+	SystemName  string `json:"systemName"`
+	ChainID     int    `json:"chainName"`
 }

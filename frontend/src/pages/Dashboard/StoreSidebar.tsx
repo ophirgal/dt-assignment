@@ -8,16 +8,18 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
-import { STORES } from '@/data/stores'
+import { useStores } from '@/hooks/use-stores'
 
 export function StoreSidebar() {
+  const { data: stores = [] } = useStores()
+
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Stores</SidebarGroupLabel>
           <SidebarMenu>
-            {STORES.map((store) => (
+            {stores.map((store) => (
               <SidebarMenuItem key={store.id}>
                 <SidebarMenuButton asChild>
                   <NavLink to={`/stores/${store.systemName}`}>

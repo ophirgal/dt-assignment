@@ -1,9 +1,11 @@
 import { useParams } from 'react-router-dom'
-import { STORES } from '@/data/stores'
+import { useStores } from '@/hooks/use-stores'
+
 
 export default function StorePanel() {
     const { storeSystemName } = useParams()
-    const store = STORES.find((s) => s.systemName === storeSystemName)
+    const { data: stores = [] } = useStores()
+    const store = stores.find((s) => s.systemName === storeSystemName)
 
     return (
         <main className="p-8">

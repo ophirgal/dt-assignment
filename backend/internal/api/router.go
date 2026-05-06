@@ -9,6 +9,7 @@ func NewRouter() *gin.Engine {
 	{
 		analytics := v1.Group("/analytics")
 		{
+			analytics.GET("/stores", GetStores)
 			analytics.GET("/sales", GetSales)
 		}
 	}

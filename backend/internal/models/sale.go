@@ -4,9 +4,9 @@ import "time"
 
 type Sale struct {
 	ID        int       `json:"id"`
-	StoreID   int       `json:"store_id"`
-	ProductID int       `json:"product_id"`
-	SoldAt    time.Time `json:"sold_at"`
+	StoreID   int       `json:"storeId"`
+	ProductID int       `json:"productId"`
+	SoldAt    time.Time `json:"soldAt"`
 	Quantity  int       `json:"quantity"`
 	Total     float64   `json:"total"`
 }

@@ -4,10 +4,10 @@ import "time"
 
 type Forecast struct {
 	ID                int       `json:"id"`
-	StoreID           int       `json:"store_id"`
-	ProductID         int       `json:"product_id"`
-	ForecastDate      string    `json:"forecast_date"`
+	StoreID           int       `json:"storeId"`
+	ProductID         int       `json:"productId"`
+	ForecastDate      string    `json:"forecastDate"`
 	Hour              int       `json:"hour"`
-	PredictedQuantity float64   `json:"predicted_quantity"`
-	GeneratedAt       time.Time `json:"generated_at"`
+	PredictedQuantity float64   `json:"predictedQuantity"`
+	GeneratedAt       time.Time `json:"generatedAt"`
 }
