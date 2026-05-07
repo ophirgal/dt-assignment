@@ -20,7 +20,7 @@ export function StoreSidebar() {
           <SidebarGroupLabel>Stores</SidebarGroupLabel>
           <SidebarMenu>
             {stores.map((store) => (
-              <SidebarMenuItem key={store.id}>
+              <SidebarMenuItem key={store.systemName}>
                 <SidebarMenuButton asChild>
                   <NavLink to={`/stores/${store.systemName}`}>
                     {store.displayName}

@@ -22,10 +22,8 @@ const PALETTE = [
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
-function tomorrow() {
-    const d = new Date()
-    d.setDate(d.getDate() + 1)
-    return d.toISOString().slice(0, 10)
+function january10_2026() {
+    return new Date('2026-01-09').toISOString().slice(0, 10)
 }
 
 function fmtDate(iso: string) {
@@ -40,15 +38,16 @@ const pad = (h: number) => String(h).padStart(2, '0')
 
 export default function StorePanel() {
     const { storeSystemName } = useParams<{ storeSystemName: string }>()
-    const [date, setDate] = useState(tomorrow())
+    const [date, setDate] = useState(january10_2026())
 
     const { data: stores = [] } = useStores()
-    const { data: forecasts = [] } = useForecast(storeSystemName!, date)
+    const storeId = stores.find((s) => s.systemName === storeSystemName)?.id
+    const { data: forecasts = [] } = useForecast(storeId!, date)
 
     const store = stores.find((s) => s.systemName === storeSystemName)
 
     const products = useMemo<Product[]>(() =>
-        [...new Set(forecasts.map((f) => f.productName))].map((name) => ({ id: name, name })),
+        [...new Set(forecasts?.map((f) => f.productName))].map((name) => ({ id: name, name })),
         [forecasts],
     )
 
@@ -56,7 +55,7 @@ export default function StorePanel() {
         Array.from({ length: 24 }, (_, hour) => {
             const perProduct: Record<string, number> = {}
             forecasts
-                .filter((f: Forecast) => f.hour === hour)
+                ?.filter((f: Forecast) => f.hour === hour)
                 .forEach((f: Forecast) => { perProduct[f.productName] = Math.ceil(f.predictedQuantity) })
             const total = Object.values(perProduct).reduce((s, v) => s + v, 0)
             return { hour, perProduct, total }

@@ -1,110 +1,41 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
-	"dt-assignment/backend/internal/models"
-
 	"github.com/gin-gonic/gin"
+	"github.com/ophirgal/dt-assignment/backend/internal/dal"
+	"gorm.io/gorm"
 )
 
-func GetForecasts(c *gin.Context) {
-	// TODO: support query params, e.g. forecasts?store=southgate-crossing&date=2026-05-07
+type ForecastController struct {
+	repo *dal.ForecastRepo
+}
 
-	// TODO: add service layer to handle business logic (or use just a simple DAL layer if service layer is not needed?)
-	predictions := []models.ForecastResponse{
-		// Morning
-		{
-			StoreName:         "Southgate Crossing",
-			ProductName:       "Burger",
-			ForecastDate:      "2026-05-07",
-			Hour:              8,
-			PredictedQuantity: 40,
-		},
-		{
-			StoreName:         "Southgate Crossing",
-			ProductName:       "Fries",
-			ForecastDate:      "2026-05-07",
-			Hour:              8,
-			PredictedQuantity: 60,
-		},
-		{
-			StoreName:         "Southgate Crossing",
-			ProductName:       "Coke",
-			ForecastDate:      "2026-05-07",
-			Hour:              8,
-			PredictedQuantity: 80,
-		},
+func NewForecastController(db *gorm.DB) *ForecastController {
+	return &ForecastController{repo: dal.NewForecastRepo(db)}
+}
 
-		// Midday peak
-		{
-			StoreName:         "Southgate Crossing",
-			ProductName:       "Burger",
-			ForecastDate:      "2026-05-07",
-			Hour:              12,
-			PredictedQuantity: 120,
-		},
-		{
-			StoreName:         "Southgate Crossing",
-			ProductName:       "Fries",
-			ForecastDate:      "2026-05-07",
-			Hour:              12,
-			PredictedQuantity: 180,
-		},
-		{
-			StoreName:         "Southgate Crossing",
-			ProductName:       "Coke",
-			ForecastDate:      "2026-05-07",
-			Hour:              12,
-			PredictedQuantity: 220,
-		},
+func (h *ForecastController) GetForecasts(c *gin.Context) {
+	storeID := c.Query("storeId")
+	date := c.Query("date")
 
-		// Afternoon
-		{
-			StoreName:         "Southgate Crossing",
-			ProductName:       "Burger",
-			ForecastDate:      "2026-05-07",
-			Hour:              16,
-			PredictedQuantity: 90,
-		},
-		{
-			StoreName:         "Southgate Crossing",
-			ProductName:       "Fries",
-			ForecastDate:      "2026-05-07",
-			Hour:              16,
-			PredictedQuantity: 140,
-		},
-		{
-			StoreName:         "Southgate Crossing",
-			ProductName:       "Coke",
-			ForecastDate:      "2026-05-07",
-			Hour:              16,
-			PredictedQuantity: 170,
-		},
-
-		// Evening peak
-		{
-			StoreName:         "Southgate Crossing",
-			ProductName:       "Burger",
-			ForecastDate:      "2026-05-07",
-			Hour:              20,
-			PredictedQuantity: 150,
-		},
-		{
-			StoreName:         "Southgate Crossing",
-			ProductName:       "Fries",
-			ForecastDate:      "2026-05-07",
-			Hour:              20,
-			PredictedQuantity: 220,
-		},
-		{
-			StoreName:         "Southgate Crossing",
-			ProductName:       "Coke",
-			ForecastDate:      "2026-05-07",
-			Hour:              20,
-			PredictedQuantity: 260,
-		},
+	if storeID == "" || date == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "storeId and date are required"})
+		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": predictions})
+	var id uint
+	if _, err := fmt.Sscanf(storeID, "%d", &id); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid storeId"})
+		return
+	}
+
+	forecasts, err := h.repo.GetForecasts(id, date)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": forecasts})
 }

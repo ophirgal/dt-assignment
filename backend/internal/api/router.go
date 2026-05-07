@@ -1,16 +1,22 @@
 package api
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+)
 
-func NewRouter() *gin.Engine {
+func NewRouter(db *gorm.DB) *gin.Engine {
 	r := gin.Default()
+
+	stores := NewStoreController(db)
+	forecasts := NewForecastController(db)
 
 	v1 := r.Group("/api/v1")
 	{
 		analytics := v1.Group("/analytics")
 		{
-			analytics.GET("/stores", GetStores)
-			analytics.GET("/forecasts", GetForecasts)
+			analytics.GET("/stores", stores.GetStores)
+			analytics.GET("/forecasts", forecasts.GetForecasts)
 		}
 	}
 
