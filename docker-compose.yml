@@ -8,8 +8,6 @@ services:
       POSTGRES_DB: appdb
     volumes:
       - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
 
   backend:
     build: ./backend
@@ -17,10 +15,11 @@ services:
       - "8080:8080"
     environment:
       DB_HOST: database
-      DB_PORT: 5433
+      DB_PORT: 5432
       DB_USER: appuser
       DB_PASSWORD: secret
       DB_NAME: appdb
+      GIN_MODE: release
     depends_on:
       - database
 

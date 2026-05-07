@@ -10,7 +10,7 @@ export default function App() {
         <Route path="/" element={<DashboardLayout />}>
           <Route index element={<Navigate to="/stores" replace />} />
           {/* TODO: show spinner and Redirect to the first store loaded */}
-          <Route path="stores" element={<Navigate to={`/stores/downtown-plaza`} replace />} />
+          <Route path="stores" element={<Navigate to={`/stores/kfc-times-square`} replace />} />
           <Route path="stores/:storeSystemName" element={<StorePanel />} />
         </Route>
         <Route path="page-not-found" element={<PageNotFound />} />
