@@ -4,8 +4,12 @@ import (
 	"embed"
 	"fmt"
 	"io/fs"
+	"log"
 	"sort"
+	"time"
 
+	"github.com/ophirgal/dt-assignment/backend/internal/config"
+	"github.com/ophirgal/dt-assignment/backend/internal/forecast"
 	"github.com/ophirgal/dt-assignment/backend/internal/model"
 
 	"gorm.io/gorm"
@@ -14,7 +18,7 @@ import (
 //go:embed seeds/*.sql
 var seedFiles embed.FS
 
-func Run(db *gorm.DB) error {
+func Run(db *gorm.DB, cfg config.Config) error {
 	if err := db.AutoMigrate(
 		&model.Chain{},
 		&model.Store{},
@@ -40,5 +44,15 @@ func Run(db *gorm.DB) error {
 			return fmt.Errorf("exec seed %s: %w", entry.Name(), err)
 		}
 	}
+
+	// backfill forecasts for Jan 2–10, 2026 (seed sales cover Jan 1–9)
+	start := time.Date(2026, 1, 2, 0, 0, 0, 0, time.UTC)
+	end := time.Date(2026, 1, 10, 0, 0, 0, 0, time.UTC)
+	for d := start; !d.After(end); d = d.AddDate(0, 0, 1) {
+		if err := forecast.GenerateForecastsForDate(db, cfg, d); err != nil {
+			log.Printf("backfill forecast %s: %v", d.Format("2006-01-02"), err)
+		}
+	}
+
 	return nil
 }

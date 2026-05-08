@@ -19,11 +19,16 @@ type avgRow struct {
 
 // GenerateForecasts computes next-day forecasts from the last cfg.LookbackDays of history and inserts them.
 func GenerateForecasts(db *gorm.DB, cfg config.Config) error {
-	today := time.Now().UTC().Truncate(24 * time.Hour)
-	start := today.AddDate(0, 0, -cfg.LookbackDays)
-	forecastDate := today.AddDate(0, 0, 1)
+	forecastDate := time.Now().UTC().Truncate(24 * time.Hour).AddDate(0, 0, 1)
+	return GenerateForecastsForDate(db, cfg, forecastDate)
+}
 
-	rows, err := computeAverages(db, start, today)
+// GenerateForecastsForDate computes forecasts for an explicit forecastDate using the last cfg.LookbackDays of history.
+func GenerateForecastsForDate(db *gorm.DB, cfg config.Config, forecastDate time.Time) error {
+	forecastDate = forecastDate.UTC().Truncate(24 * time.Hour)
+	start := forecastDate.AddDate(0, 0, -cfg.LookbackDays)
+
+	rows, err := computeAverages(db, start, forecastDate)
 	if err != nil {
 		return err
 	}

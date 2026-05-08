@@ -18,7 +18,7 @@ func main() {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 
-	if err := migration.Run(db); err != nil {
+	if err := migration.Run(db, cfg); err != nil {
 		log.Fatalf("migration failed: %v", err)
 	}
 
