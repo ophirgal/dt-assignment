@@ -1,5 +1,5 @@
 
-import { useQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { API_V1_BASE_URL, ANALYTICS_STORES_ENDPOINT } from '@/api/constants'
 import { apiGet } from '@/api/utils'
@@ -10,7 +10,7 @@ async function fetchStores(): Promise<Store[]> {
 }
 
 export function useStores() {
-    return useQuery({
+    return useSuspenseQuery({
         queryKey: ['stores'],
         queryFn: fetchStores,
     })

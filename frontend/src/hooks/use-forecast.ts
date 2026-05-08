@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { API_V1_BASE_URL, ANALYTICS_FORECASTS_ENDPOINT } from '@/api/constants'
 import { apiGet } from '@/api/utils'
@@ -11,9 +11,8 @@ async function fetchForecast(storeId: string, date: string): Promise<Forecast[]>
 }
 
 export function useForecast(storeId: string, date: string) {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: ['forecasts', storeId, date],
     queryFn: () => fetchForecast(storeId, date),
-    enabled: Boolean(storeId && date),
   })
 }
