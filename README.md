@@ -4,6 +4,8 @@ A daily sales forecasting service that predicts per-hour, per-product, per-store
 
 Clarification: you may notice that it seems the same chart is being shown for different days/stores, but this is simply due to my fake seed data not being diverse (I chose not to spend time on this). I assure you the charts reflect the true sales data and the resulting forecasts.
 
+<img width="1470" height="825" alt="image" src="https://github.com/user-attachments/assets/fc2cf46e-50f9-4c69-b40b-e4154be24ca8" />
+
 ---
 
 ## How to Run
@@ -41,7 +43,7 @@ I used Claude code in a controlled way, carefully reviewing its work on the way.
 | Styling | Tailwind CSS + shadcn/ui |
 | Reverse proxy | nginx |
 | Containerization | Docker Compose |
-`
+
 ---
 
 ## Architecture
