@@ -42,10 +42,8 @@ export default function StorePanel() {
     const [date, setDate] = useState(january10_2026())
 
     const { data: stores = [] } = useStores()
-    const storeId = stores.find((s) => s.systemName === storeSystemName)?.id
-    const { data: forecasts = [] } = useForecast(storeId!, date)
-
     const store = stores.find((s) => s.systemName === storeSystemName)
+    const { data: forecasts = [] } = useForecast(store?.id ?? '', date)
 
     const products = useMemo<Product[]>(() =>
         [...new Set(forecasts?.map((f) => f.productName))].map((name) => ({ id: name, name })),
