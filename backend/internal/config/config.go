@@ -7,9 +7,15 @@ import (
 	"github.com/ophirgal/dt-assignment/backend/internal/util"
 )
 
+// Config holds the application configuration.
+// It is loaded from environment variables and has fallback values.
+// LOOKBACK_DAYS -> the number of days to look back for forecast generation (integers).
+// GENERATION_INTERVAL_DAYS -> the number of days between forecast generations (integers).
+// GENERATION_HOUR -> the hour of the day to generate forecasts (0-23).
 type Config struct {
 	LookbackDays       int
 	GenerationInterval int
+	GenerationHour     int
 }
 
 func GetConfig() Config {
@@ -21,10 +27,12 @@ func GetConfig() Config {
 
 	lookbackDays := GetPositiveIntFromEnv("LOOKBACK_DAYS", 7)
 	generationInterval := GetPositiveIntFromEnv("GENERATION_INTERVAL_DAYS", 1)
+	generationHour := GetPositiveIntFromEnv("GENERATION_HOUR", 1)
 
 	return Config{
-		LookbackDays: lookbackDays,
+		LookbackDays:       lookbackDays,
 		GenerationInterval: generationInterval,
+		GenerationHour:     generationHour,
 	}
 }
 

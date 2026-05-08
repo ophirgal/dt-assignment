@@ -22,7 +22,9 @@ func main() {
 		log.Fatalf("migration failed: %v", err)
 	}
 
-	// start forecast worker. In a real system I would separate this into its own service.
+	// Start forecast worker as a separate goroutine.
+	// Note: In a real system I consider using a CronJob (K8s), or, 
+	// if the forecast logic was simple, I would consider using timescaledb's "continuous aggregates".
 	forecast.StartWorker(db, cfg)
 
 	r := api.NewRouter(db)
