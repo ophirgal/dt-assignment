@@ -26,6 +26,11 @@ docker compose down -v && docker compose up --build
 
 ---
 
+## AI Usage
+I used Claude code in a controlled way, carefully reviewing its work on the way. But I wrote a bunch of code myself as well in specific parts, developers need to stand behind what they generate and not fall into the trap of generating a lot of (often redundant) code. 
+
+---
+
 ## Technologies
 
 | Layer | Technology |
@@ -52,7 +57,7 @@ nginx
 
 The frontend is **not** a runtime service — it's compiled during the Docker build and served as static files by nginx.
 
-The backend runs the API server and forecast scheduler as goroutines in a single binary (see __Design Considerations__ for details).
+The backend runs the API server and forecast scheduler as goroutines in a single binary (see __Design Considerations__ for details). I designed the microservice based on the n-layered architecure (separating api layer, data access layer, etc.).
 
 ### API
 
