@@ -62,7 +62,7 @@ The backend runs the API server and forecast scheduler as goroutines in a single
 ### API
 
 - `GET /api/v1/stores` — list all stores
-- `GET /api/v1/forecasts?store_id={id}&date={YYYY-MM-DD}` — hourly forecasts for a store on a given date
+- `GET /api/v1/forecasts?storeId={id}&date={YYYY-MM-DD}` — hourly forecasts for a store on a given date
 
 ### Configuration
 
