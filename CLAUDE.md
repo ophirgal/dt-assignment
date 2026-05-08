@@ -10,7 +10,7 @@ A backend service generates per-hour, per-product, per-store sales forecasts for
 
 ## Stack
 
-- **Backend**: Go — single binary, stdlib-first, minimal deps
+- **Backend**: Go (Gin, GORM) — single binary, stdlib-first, minimal deps
 - **Frontend**: React + TypeScript + Vite (built to static assets)
 - **Database**: Postgres (vanilla — **no extensions**)
 - **Deployment**: `docker-compose` with three services:
@@ -27,15 +27,16 @@ The frontend is **not** a runtime service. It's built (in a multi-stage Dockerfi
 ├── backend/
 │   ├── cmd/server/         # main.go — boots HTTP server + scheduler as goroutines
 │   ├── internal/
-│   │   ├── api/            # HTTP handlers, routing
+│   │   ├── api/            # HTTP handlers, routing (Gin)
 │   │   ├── forecast/       # Forecast generation logic — keep pure, heavily tested
-│   │   ├── storage/        # DB access, queries, migrations, seeder
-│   │   └── config/         # Config file loading
+│   │   ├── dal/            # DB access, GORM repos, migrations, seed SQL files
+│   │   ├── model/          # GORM model structs
+│   │   ├── config/         # Config loading from env
+│   │   └── util/           # Small shared helpers
 │   └── Dockerfile
 ├── frontend/               # React + TS + Vite
 │   └── Dockerfile          # multi-stage: build → nginx
 ├── docker-compose.yml
-├── config.yaml             # runtime config (see below)
 └── CLAUDE.md
 ```
 
@@ -87,23 +88,14 @@ Indexes:
 
 ## Configuration
 
-All operational parameters live in `config.yaml` loaded at startup. The UI does **not** expose configuration — config is operator-controlled, per spec.
+All operational parameters are loaded from environment variables (`.env` for local dev, injected via `docker-compose` in containers). The UI does **not** expose configuration.
 
-```yaml
-forecast:
-  interval: 24h          # how often the generator runs
-  history_days: 30       # days of history to average over
-  run_at: "02:00"        # wall-clock time to run daily
-db:
-  host: postgres
-  port: 5432
-  # ...
-server:
-  port: 8080
-seed:
-  enabled: true          # generate fake history on first boot
-  days: 60               # how many days of history to fabricate
-```
+| Variable | Default | Description |
+|---|---|---|
+| `LOOKBACK_DAYS` | `7` | Days of sales history to average over |
+| `GENERATION_INTERVAL_DAYS` | `1` | Interval between forecast runs |
+| `GENERATION_HOUR` | `0` | Hour of day (0–23) to run the job |
+| `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | — | Postgres connection |
 
 ## API Surface
 
@@ -166,19 +158,8 @@ npm run dev                         # Vite dev server, proxy /api to localhost:8
 
 ## Conventions
 
-- **Go**: stdlib first; add deps only with reason. Logging via `log/slog`. Config loaded once into a typed struct, passed by value to constructors. No global state.
+- **Go**: stdlib first; add deps only with reason. Logging via stdlib `log`. Config loaded once into a typed struct, passed by value. No global state.
 - **TypeScript**: strict mode on, no `any`. Functional components + hooks. Small components.
-- **DB migrations**: SQL files in `backend/internal/storage/migrations/`, applied on startup (golang-migrate or similar).
-- **Tests**: forecast logic gets table-driven unit tests with explicit edge-case coverage. API handlers get integration tests against a real Postgres (testcontainers or compose-managed).
+- **DB migrations**: GORM AutoMigrate + SQL seed files in `backend/internal/dal/migration/seeds/`, applied on startup.
+- **Tests**: forecast logic has unit tests. No integration tests at this scope.
 - **Commits**: small, focused, clear messages.
-
-## README checklist (separate from this file)
-
-The user-facing `README.md` should cover:
-- One-line description, quickstart (`docker compose up`)
-- Architecture diagram (or ascii)
-- Configuration reference
-- Explicit notes on:
-  - "Sales modeled as fact table; in production would be derived from OLTP orders via ETL"
-  - "Forecast averaging: zero-sale hours handled as [decision]; rounding policy is [decision]"
-  - Known limitations / trade-offs
