@@ -2,6 +2,7 @@ package dal
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"gorm.io/driver/postgres"
@@ -20,7 +21,18 @@ func NewDB() (*gorm.DB, error) {
 		util.GetEnv("DB_NAME", "postgres"),
 	)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	var db *gorm.DB
+	var err error
+	for attempt := 1; attempt <= 5; attempt++ {
+		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		if err == nil {
+			break
+		}
+		if attempt < 5 {
+			log.Printf("DB connection failed (attempt %d): %v, retrying...", attempt, err)
+			time.Sleep(3 * time.Second)
+		}
+	}
 	if err != nil {
 		return nil, err
 	}
