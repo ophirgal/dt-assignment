@@ -19,11 +19,8 @@ type Config struct {
 }
 
 func GetConfig() Config {
-	// load .env file
-	err := godotenv.Load()
-	if err != nil {
-		panic("failed to load env file")
-	}
+	// .env loaded for local dev; in Docker vars are injected via compose env_file
+	_ = godotenv.Load()
 
 	lookbackDays := GetPositiveIntFromEnv("LOOKBACK_DAYS", 7)
 	generationInterval := GetPositiveIntFromEnv("GENERATION_INTERVAL_DAYS", 1)

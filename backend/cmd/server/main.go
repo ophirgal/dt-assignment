@@ -18,15 +18,18 @@ func main() {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 
+	log.Println("Running DB migration.")
 	if err := migration.Run(db, cfg); err != nil {
 		log.Fatalf("migration failed: %v", err)
 	}
 
+	log.Println("Starting forecast worker.")
 	// Start forecast worker as a separate goroutine.
-	// Note: In a real system I consider using a CronJob (K8s), or, 
+	// Note: In a real system I consider using a CronJob (K8s), or,
 	// if the forecast logic was simple, I would consider using timescaledb's "continuous aggregates".
 	forecast.StartWorker(db, cfg)
 
+	log.Println("Starting API server.")
 	r := api.NewRouter(db)
 	if err := r.Run(":8080"); err != nil {
 		log.Fatalf("server failed: %v", err)
