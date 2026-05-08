@@ -111,7 +111,7 @@ It also shares the same cached responses across all consuming componenets, actin
 
 Given the ~4–5 hour scope, several things were intentionally left out or simplified:
 
-- **Test coverage is minimal.** The forecast generation logic has unit tests. API handlers and the DAL layer have no automated tests — in a real project I'd add integration tests (e.g. using testcontainers) and expand unit test coverage significantly.
+- **Test coverage is minimal.** The forecast generation logic has unit tests. API handlers and the DAL layer have no automated tests — in a real project I'd expand unit test coverage, and add integration tests or at least end-to-end tests.
 - **No authentication or authorization.** All endpoints are public.
 - **No sales write API.** Sales data is seeded on startup. A real system would have ingestion endpoints or an ETL pipeline.
 - **Single-day forecast horizon.** The scheduler generates forecasts for the next day only; multi-day lookahead is out of scope per the spec.
