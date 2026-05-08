@@ -1,6 +1,8 @@
 # KFC Sales Forecasting Service
 
-A daily sales forecasting service that predicts per-hour, per-product, per-store demand for the next day using historical sales averages. Built as a take-home assignment.
+A daily sales forecasting service that predicts per-hour, per-product, per-store demand for the next day using historical sales averages. Built as a take-home assignment.  
+
+Clarification: you may notice that it seems the same chart is being shown for different days/stores, but this is simply due to my fake seed data not being diverse (I chose not to spend time on this). I assure you the charts reflect the true sales data and the resulting forecasts.
 
 ---
 
