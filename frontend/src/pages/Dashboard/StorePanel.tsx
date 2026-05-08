@@ -64,6 +64,8 @@ export default function StorePanel() {
         [forecasts],
     )
 
+    if (!store) return <StoreNotFound />
+
     return (
         <div className="flex flex-col h-full">
             <ForecastHeader
@@ -262,6 +264,16 @@ function ForecastChart({ rows, products }: { rows: HourRow[]; products: Product[
                     )}
                 </div>
             </div>
+        </div>
+    )
+}
+
+// ── StoreNotFound ─────────────────────────────────────────────────────────────
+
+function StoreNotFound() {
+    return (
+        <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+            <p className="text-2xl font-medium">Store not found :/</p>
         </div>
     )
 }
