@@ -22,8 +22,9 @@ const PALETTE = [
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
+// Using January 10th 2026 harcoded for assignment. In a real app, we would use the current day.
 function january10_2026() {
-    return new Date('2026-01-09').toISOString().slice(0, 10)
+    return new Date('2026-01-10').toISOString().slice(0, 10)
 }
 
 function fmtDate(iso: string) {
@@ -164,16 +165,24 @@ function ForecastChart({ rows, products }: { rows: HourRow[]; products: Product[
             {/* Chart */}
             <div className="relative">
                 {/* Y-axis */}
-                <div
-                    className="absolute left-0 top-0 w-10 flex flex-col justify-between text-right pr-3 font-mono text-[11px] text-muted-foreground"
-                    style={{ height: CHART_HEIGHT }}
-                >
-                    {[...ticks].reverse().map((t) => (
-                        <span key={t}>{Math.round(maxTotal * t)}</span>
-                    ))}
+                <div className="absolute left-0 top-0 flex items-center gap-1" style={{ height: CHART_HEIGHT }}>
+                    <span
+                        className="font-mono text-[11px] tracking-[0.14em] uppercase text-muted-foreground"
+                        style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+                    >
+                        Items
+                    </span>
+                    <div
+                        className="flex flex-col justify-between text-right pr-3 font-mono text-[11px] text-muted-foreground w-8"
+                        style={{ height: CHART_HEIGHT }}
+                    >
+                        {[...ticks].reverse().map((t) => (
+                            <span key={t}>{Math.round(maxTotal * t)}</span>
+                        ))}
+                    </div>
                 </div>
 
-                <div className="ml-10">
+                <div className="ml-14">
                     {/* Bars + grid */}
                     <div className="relative" style={{ height: CHART_HEIGHT }}>
                         {ticks.map((t) => (
@@ -244,6 +253,9 @@ function ForecastChart({ rows, products }: { rows: HourRow[]; products: Product[
                             </div>
                         ))}
                     </div>
+                    <p className="mt-1 text-center font-mono text-[11px] tracking-[0.14em] uppercase text-muted-foreground">
+                        Hour
+                    </p>
 
                     {hoverHour !== null && (rows[hoverHour]?.total ?? 0) > 0 && (
                         <HoverDetail row={rows[hoverHour]!} products={products} />
@@ -259,9 +271,7 @@ function ForecastChart({ rows, products }: { rows: HourRow[]; products: Product[
 function ForecastFooter() {
     return (
         <footer className="px-10 py-4 border-t border-border flex flex-wrap gap-5 font-mono text-xs text-muted-foreground">
-            <span>predicted_quantity = ⌈avg(last 30 days, same hour)⌉</span>
-            <span>·</span>
-            <span>zero-sale hours excluded from denominator</span>
+            <span>predicted_quantity = ⌈avg(last 7 days, same hour)⌉</span>
             <span>·</span>
             <span>store-local time</span>
         </footer>
